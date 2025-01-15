@@ -28,9 +28,28 @@ async function run() {
 
 
     const userCollections = client.db("vocabollary_db").collection("users");
+    const courseCollections = client.db("vocabollary_db").collection("courses");
 
 
-   
+    app.post('/users',async (req,res)=>{
+        const user= req.body
+        // console.log(user)
+        const result= await userCollections.insertOne(user) 
+        res.send(result)
+
+    })
+
+    app.get('/users',async(req,res)=>{
+      const result= await userCollections.find().toArray()
+         res.send(result)
+    })
+
+    app.post ('/courses',async(req,res)=>{
+       const course=req.body;
+       console.log(course)
+
+    })
+
 
 
     // Connect the client to the server	(optional starting in v4.7)
@@ -45,11 +64,9 @@ async function run() {
 }
 run().catch(console.dir);
 
-
 app.get('/',(req,res)=>{
     res.send('vocabolary learning is running....')
 })
-
 
 
 app.listen(port, () => {
