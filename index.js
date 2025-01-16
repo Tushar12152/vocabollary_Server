@@ -51,6 +51,11 @@ async function run() {
 
     })
 
+    app.get('/courses',async(req,res)=>{
+           const result=await courseCollections.find().toArray()
+           res.send(result)
+
+    })
 
 
     // Connect the client to the server	(optional starting in v4.7)
