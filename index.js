@@ -10,7 +10,6 @@ app.use(express.json())
 
 
 
-
 const { MongoClient, ServerApiVersion, ObjectId } = require('mongodb');
 const uri = `mongodb+srv://${process.env.DB_USER}:${process.env.DB_PASS}@cluster0.tgzt8q2.mongodb.net/?retryWrites=true&w=majority&appName=Cluster0`;
 
@@ -23,10 +22,11 @@ const client = new MongoClient(uri, {
   }
 });
 
+
 async function run() {
   try {
 
-
+    
     const userCollections = client.db("vocabollary_db").collection("users");
     const courseCollections = client.db("vocabollary_db").collection("courses");
 
@@ -39,10 +39,45 @@ async function run() {
 
     })
 
+
     app.get('/users',async(req,res)=>{
       const result= await userCollections.find().toArray()
          res.send(result)
     })
+
+    app.get('/users/:id',async(req,res)=>{
+        const id= req.params.id;
+        const query={_id: new ObjectId(id)}
+        const result=await userCollections.findOne(query)
+        res.send(result)
+
+    })
+
+    app.patch('/users/:id',async(req,res)=>{
+      const id=req.params.id
+      const filter = { _id: new ObjectId(id) };
+      const options = { upsert: true };
+      const user=req.body
+      console.log(user.Role,id)
+      const updateDoc = {
+        $set: {
+          Role:user?.role
+        },
+      };
+
+      const result = await userCollections.updateOne(filter, updateDoc, options);
+      res.send(result)
+    })
+
+
+    app.delete('/users/:id',async(req,res)=>{
+         const id=req.params.id;
+         const query= {_id: new ObjectId(id)}
+         const result= await userCollections.deleteOne(query)
+         res.send(result)
+    })
+
+
 
     app.post ('/courses',async(req,res)=>{
        const course=req.body;
@@ -64,6 +99,7 @@ async function run() {
          res.send(result)
 
     })
+
 
 
     // Connect the client to the server	(optional starting in v4.7)
